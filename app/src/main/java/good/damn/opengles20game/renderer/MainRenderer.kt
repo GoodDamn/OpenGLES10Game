@@ -2,9 +2,9 @@ package good.damn.opengles20game.renderer
 
 import android.content.Context
 import android.opengl.GLES11.*
-import android.opengl.GLU.*
 import android.opengl.GLSurfaceView
 import good.damn.opengles20game.components.Mesh
+import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.templates.Square
 import good.damn.opengles20game.templates.Triangle
 import javax.microedition.khronos.egl.EGLConfig
@@ -12,11 +12,16 @@ import javax.microedition.khronos.opengles.GL10
 
 class MainRenderer: GLSurfaceView.Renderer {
 
+    private val TAG = "MainRenderer"
+
     private lateinit var mesh: Mesh
 
     private var mSquare: Square
     private var mTriangle: Triangle
 
+    private var mRotatableCamera = RotatableCamera()
+
+    private var mAspect: Float = 1f
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
@@ -43,29 +48,27 @@ class MainRenderer: GLSurfaceView.Renderer {
                                   height: Int) {
         mWidth = width
         mHeight = height
-        val aspect = width.toFloat() / height
+        mAspect = width.toFloat() / height
         glViewport(0,0,mWidth,mHeight)
 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(gl, 45.0f, aspect, 0.1f, 100.0f)
-
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
+        mRotatableCamera.perspective(
+            45.0f, mAspect,
+            0.1f, 100.0f, gl!!)
     }
 
-    override fun onDrawFrame(p0: GL10?) {
+    override fun onDrawFrame(gl: GL10?) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         glClearColor(0f,0f,0f,0f)
         glViewport(0,0,mWidth,mHeight)
 
-        glLoadIdentity() // Reset model-view matrix
-        glTranslatef(-1.5f,0.0f,-6.0f)
-        //mTriangle.draw()
+        mRotatableCamera.layout(gl!!)
 
-        //glTranslatef(3.0f,0.0f,0.0f)
-        //mSquare.draw()
+        glTranslatef(-1.5f,0.0f,-6.0f)
 
         mesh.draw()
+    }
+
+    fun setCamera(rotatableCamera: RotatableCamera) {
+        mRotatableCamera = rotatableCamera
     }
 }
