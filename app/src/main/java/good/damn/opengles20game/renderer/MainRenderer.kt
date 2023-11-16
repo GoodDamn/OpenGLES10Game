@@ -12,7 +12,7 @@ import javax.microedition.khronos.opengles.GL10
 
 class MainRenderer: GLSurfaceView.Renderer {
 
-    //private lateinit var mesh: Mesh
+    private lateinit var mesh: Mesh
 
     private var mSquare: Square
     private var mTriangle: Triangle
@@ -29,7 +29,7 @@ class MainRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        //mesh = Mesh(mContext,"box.obj")
+        mesh = Mesh(mContext,"box.obj")
         glClearDepthf(1.0f)
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LEQUAL)
@@ -61,11 +61,11 @@ class MainRenderer: GLSurfaceView.Renderer {
 
         glLoadIdentity() // Reset model-view matrix
         glTranslatef(-1.5f,0.0f,-6.0f)
-        mTriangle.draw()
+        //mTriangle.draw()
 
-        glTranslatef(3.0f,0.0f,0.0f)
-        mSquare.draw()
+        //glTranslatef(3.0f,0.0f,0.0f)
+        //mSquare.draw()
 
-        //mesh.draw()
+        mesh.draw()
     }
 }

@@ -4,15 +4,12 @@ import android.content.Context
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.nio.IntBuffer
 import java.util.*
 
 final class FileOBJ {
 
-    val mNormals: FloatArray
-    var mTexCoords: FloatArray
-    var mPositions: FloatArray
-    var mIndices: IntArray
+    var mVertices: FloatArray
+    var mIndices: ShortArray
 
     constructor(context: Context,
                 fileName: String?) {
@@ -74,12 +71,32 @@ final class FileOBJ {
             }
         }
 
-        mNormals = FloatArray(faces.size * 3)
-        mTexCoords = FloatArray(faces.size * 2)
-        mPositions = FloatArray(faces.size * 3)
-        mIndices = IntArray(faces.size)
+        //mNormals = FloatArray(faces.size * 3)
+        //mTexCoords = FloatArray(faces.size * 2)
+        mVertices = vertices.toFloatArray()
+        mIndices = ShortArray(faces.size)
 
-        var posIndex = 0
+        var index = 0
+
+        for (face in faces) {
+            val parts = face.split("/")
+            val vertexIndex = (parts[0].toShort() - 1).toShort()
+            mIndices[index] = vertexIndex
+            index++
+        }
+
+        /*mVertices = floatArrayOf(
+             1.0f,  1.0f,  1.0f, // rb
+             1.0f, -1.0f,  1.0f, // rt
+            -1.0f, -1.0f,  1.0f, // lt
+            -1.0f,  1.0f,  1.0f  // lb
+        )
+
+        mIndices = shortArrayOf(
+            0,1,2,2,3,0
+        )*/
+
+        /*var posIndex = 0
         var normIndex = 0
         var texIndex = 0
 
@@ -101,6 +118,6 @@ final class FileOBJ {
             mNormals[texIndex++] = normals[index++]
             mNormals[texIndex++] = normals[index++]
             mNormals[texIndex++] = normals[index]
-        }
+        }*/
     }
 }
