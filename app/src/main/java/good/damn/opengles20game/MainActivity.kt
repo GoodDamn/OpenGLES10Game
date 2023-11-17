@@ -8,8 +8,13 @@ import android.view.MotionEvent
 import android.view.View
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.renderer.MainRenderer
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        val mRandom = Random()
+    }
 
     private lateinit var mSurfaceView: GLSurfaceView
 
@@ -32,7 +37,8 @@ class MainActivity : AppCompatActivity() {
                 MotionEvent.ACTION_DOWN -> {
                     rotatableCamera.anchor(
                         motion.rawX,
-                        motion.rawY)
+                        motion.rawY
+                    )
                 }
                 MotionEvent.ACTION_MOVE -> {
                     rotatableCamera.rotate(

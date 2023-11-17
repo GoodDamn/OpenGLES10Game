@@ -8,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10
 
 class RotatableCamera {
 
+    private val RAD = 3.14159 / 180
 
     private var mRadius = 15.0
 
@@ -27,28 +28,34 @@ class RotatableCamera {
     fun layout(gl: GL10) {
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        GLU.gluLookAt(gl,
+        GLU.gluLookAt(
+            gl,
             mX, mY, mZ,
             mAnchorX, mAnchorY, mAnchorZ,
-            0f,1f,0f)
+            0f, 1f, 0f
+        )
     }
 
-    fun anchor(x:Float, y: Float) {
+    fun anchor(
+        x: Float,
+        y: Float
+    ) {
         mAnchorTouchX = x
         mAnchorTouchY = y
     }
 
-    fun rotate(x: Float,
-               y: Float) {
-
-        mAngleX += (mAnchorTouchX - x) * 0.0001f
+    fun rotate(
+        x: Float,
+        y: Float
+    ) {
+        mAngleX += (x - mAnchorTouchX) * 0.001f
         if (mAngleX >= 360) {
             mAngleX -= 360
         } else if (mAngleX <= -360) {
             mAngleX += 360
         }
 
-        mAngleY -= (mAnchorTouchY - y) * 0.0001f
+        mAngleY -= (y - mAnchorTouchY) * 0.001f
         if (mAngleY < 5) {
             mAngleY = 5.0
         } else if (mAngleY > 90) {
@@ -58,15 +65,19 @@ class RotatableCamera {
         val ySin = sin(mAngleY)
 
         mX = (mRadius * ySin * cos(mAngleX)).toFloat()
-        mY = (mRadius * ySin * sin(mAngleX)).toFloat()
-        mZ = (mRadius * cos(mAngleY)).toFloat()
+        mY = (mRadius * cos(mAngleY)).toFloat()
+        mZ = (mRadius * ySin * sin(mAngleX)).toFloat()
+
+        mAnchorTouchX = x
+        mAnchorTouchY = y
     }
 
-    fun perspective(fov: Float,
-                   ratio: Float,
-                   zNear: Float,
-                   zFar: Float,
-                   gl: GL10
+    fun perspective(
+        fov: Float,
+        ratio: Float,
+        zNear: Float,
+        zFar: Float,
+        gl: GL10
     ) {
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()

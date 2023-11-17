@@ -1,10 +1,13 @@
 package good.damn.opengles20game.renderer
 
 import android.content.Context
+import android.media.metrics.PlaybackErrorEvent
 import android.opengl.GLES11.*
 import android.opengl.GLSurfaceView
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.camera.RotatableCamera
+import good.damn.opengles20game.components.entities.enemies.Ghost
+import good.damn.opengles20game.components.entities.players.Player
 import good.damn.opengles20game.templates.Square
 import good.damn.opengles20game.templates.Triangle
 import javax.microedition.khronos.egl.EGLConfig
@@ -14,7 +17,8 @@ class MainRenderer: GLSurfaceView.Renderer {
 
     private val TAG = "MainRenderer"
 
-    private lateinit var mesh: Mesh
+    private lateinit var mGhosts: Array<Ghost>
+    private lateinit var mPlayer: Player
 
     private var mSquare: Square
     private var mTriangle: Triangle
@@ -34,7 +38,17 @@ class MainRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        mesh = Mesh(mContext,"box.obj")
+        val meshGhost = Mesh(mContext, "sphere.obj")
+        mGhosts = arrayOf(
+            Ghost(meshGhost),
+            Ghost(meshGhost),
+            Ghost(meshGhost)
+        )
+
+        mPlayer = Player(Mesh(mContext, "box.obj"))
+
+        mPlayer.setPosition(5f,0f,0f)
+
         glClearDepthf(1.0f)
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LEQUAL)
@@ -63,9 +77,11 @@ class MainRenderer: GLSurfaceView.Renderer {
 
         mRotatableCamera.layout(gl!!)
 
-        glTranslatef(-1.5f,0.0f,-6.0f)
+        for (ghost in mGhosts) {
+            ghost.draw()
+        }
 
-        mesh.draw()
+        mPlayer.draw()
     }
 
     fun setCamera(rotatableCamera: RotatableCamera) {

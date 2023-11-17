@@ -49,7 +49,6 @@ class Mesh {
         //glEnableClientState(GL_COLOR_ARRAY)
         //GLES10.glColorPointer(4, GL_FLOAT, 0, mColorBuffer)
 
-        glColor4f(1.0f,0.0f,0.0f,1.0f)
         glDrawElements(
             GL_TRIANGLES,
             mIndices.capacity(),
