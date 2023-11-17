@@ -45,10 +45,11 @@ class MainRenderer: GLSurfaceView.Renderer {
         }
 
         val meshGhost = Mesh(
-            "objs/sphere.obj",
+            "objs/box1.obj",
             "textures/border_object.png",
             mContext)
         mGhosts = arrayOf(
+            Ghost(meshGhost),
             Ghost(meshGhost),
             Ghost(meshGhost),
             Ghost(meshGhost)

@@ -5,10 +5,9 @@ import android.opengl.GLU
 import java.lang.Math.cos
 import java.lang.Math.sin
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.hypot
 
 class RotatableCamera {
-
-    private val RAD = 3.14159 / 180
 
     private var mRadius = 15.0
 
@@ -22,8 +21,13 @@ class RotatableCamera {
     private var mAnchorY = 0.0f
     private var mAnchorZ = 0.0f
 
+    private var mSwapTouchX = 0.0f
+    private var mSwapTouchY = 0.0f
+
     private var mAnchorTouchX = 0.0f
     private var mAnchorTouchY = 0.0f
+
+    private var mSwapRadius = 5.0;
 
     fun layout(gl: GL10) {
         glMatrixMode(GL_MODELVIEW)
@@ -40,6 +44,11 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
+        mSwapRadius = mRadius
+
+        mSwapTouchX = x
+        mSwapTouchY = y
+
         mAnchorTouchX = x
         mAnchorTouchY = y
     }
@@ -48,28 +57,32 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
-        mAngleX += (x - mAnchorTouchX) * 0.001f
+
+        mAngleX += (x - mSwapTouchX) * 0.001f
         if (mAngleX >= 360) {
             mAngleX -= 360
         } else if (mAngleX <= -360) {
             mAngleX += 360
         }
 
-        mAngleY -= (y - mAnchorTouchY) * 0.001f
+        mAngleY -= (y - mSwapTouchY) * 0.001f
         if (mAngleY < 5) {
             mAngleY = 5.0
         } else if (mAngleY > 90) {
             mAngleY = 90.0
         }
 
-        val ySin = sin(mAngleY)
+        recalPos()
 
-        mX = (mRadius * ySin * cos(mAngleX)).toFloat()
-        mY = (mRadius * cos(mAngleY)).toFloat()
-        mZ = (mRadius * ySin * sin(mAngleX)).toFloat()
+        mSwapTouchX = x
+        mSwapTouchY = y
+    }
 
-        mAnchorTouchX = x
-        mAnchorTouchY = y
+    fun zoom(x: Float,
+             y: Float) {
+        mRadius = mSwapRadius - hypot((x - mAnchorTouchX).toDouble(),
+                (y - mAnchorTouchY).toDouble()) * 0.01f
+        recalPos()
     }
 
     fun perspective(
@@ -82,5 +95,13 @@ class RotatableCamera {
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         GLU.gluPerspective(gl, fov, ratio, zNear, zFar)
+    }
+
+    private fun recalPos() {
+        val ySin = sin(mAngleY)
+
+        mX = (mRadius * ySin * cos(mAngleX)).toFloat()
+        mY = (mRadius * cos(mAngleY)).toFloat()
+        mZ = (mRadius * ySin * sin(mAngleX)).toFloat()
     }
 }

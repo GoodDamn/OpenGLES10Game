@@ -4,18 +4,24 @@ import android.annotation.SuppressLint
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.MotionEventCompat
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.renderer.MainRenderer
 import java.util.*
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
+
+    private val TAG = "MainActivity"
 
     companion object {
         val mRandom = Random()
     }
+
+    private var mHas2Fingers = false
+    private var mActivePtrId = 0
 
     private lateinit var mSurfaceView: GLSurfaceView
 
@@ -34,20 +40,51 @@ class MainActivity : AppCompatActivity() {
 
         mSurfaceView.setOnTouchListener { _, motion ->
 
-            when (motion.action) {
+            when (motion.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
+
+                    mActivePtrId = motion.getPointerId(0)
+
                     rotatableCamera.anchor(
                         motion.rawX,
                         motion.rawY
                     )
+                    Log.d(TAG, "onCreate: ACTION_DOWN")
                 }
                 MotionEvent.ACTION_MOVE -> {
+
+                    if (mHas2Fingers) {
+
+                        val ptrIndex  = motion
+                            .findPointerIndex(mActivePtrId)
+                        Log.d(TAG, "onCreate: ACTION_MOVE: mHas2Fingers: ")
+
+                        rotatableCamera.zoom(
+                            motion.getX(ptrIndex),
+                            motion.getY(ptrIndex))
+                        return@setOnTouchListener true
+                    }
+
                     rotatableCamera.rotate(
                         motion.rawX,
                         motion.rawY)
+                    Log.d(TAG, "onCreate: ACTION_MOVE")
                 }
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    rotatableCamera.anchor(
+                        motion.rawX,
+                        motion.rawY
+                    )
+                    mHas2Fingers = true
+                    Log.d(TAG, "onCreate: ACTION_POINTER_DOWN")
+                }
+                MotionEvent.ACTION_POINTER_UP -> {
+                    mHas2Fingers = false
+                    Log.d(TAG, "onCreate: ACTION_POINTER_UP")
+                }
 
+                MotionEvent.ACTION_UP -> {
+                    Log.d(TAG, "onCreate: ACTION_UP")
                 }
             }
 
