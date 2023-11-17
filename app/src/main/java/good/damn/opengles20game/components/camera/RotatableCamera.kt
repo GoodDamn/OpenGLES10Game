@@ -24,11 +24,6 @@ class RotatableCamera {
     private var mSwapTouchX = 0.0f
     private var mSwapTouchY = 0.0f
 
-    private var mAnchorTouchX = 0.0f
-    private var mAnchorTouchY = 0.0f
-
-    private var mSwapRadius = 5.0;
-
     fun layout(gl: GL10) {
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -44,13 +39,8 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
-        mSwapRadius = mRadius
-
         mSwapTouchX = x
         mSwapTouchY = y
-
-        mAnchorTouchX = x
-        mAnchorTouchY = y
     }
 
     fun rotate(
@@ -58,14 +48,14 @@ class RotatableCamera {
         y: Float
     ) {
 
-        mAngleX += (x - mSwapTouchX) * 0.001f
+        mAngleX += (x - mSwapTouchX) * 0.01f
         if (mAngleX >= 360) {
             mAngleX -= 360
         } else if (mAngleX <= -360) {
             mAngleX += 360
         }
 
-        mAngleY -= (y - mSwapTouchY) * 0.001f
+        mAngleY -= (y - mSwapTouchY) * 0.01f
         if (mAngleY < 5) {
             mAngleY = 5.0
         } else if (mAngleY > 90) {
@@ -73,16 +63,17 @@ class RotatableCamera {
         }
 
         recalPos()
-
         mSwapTouchX = x
         mSwapTouchY = y
     }
 
     fun zoom(x: Float,
              y: Float) {
-        mRadius = mSwapRadius - hypot((x - mAnchorTouchX).toDouble(),
-                (y - mAnchorTouchY).toDouble()) * 0.01f
+        mRadius -= (x - mSwapTouchX) * 0.01f
+        mRadius -= (y - mSwapTouchY) * 0.01f
         recalPos()
+        mSwapTouchX = x
+        mSwapTouchY = y
     }
 
     fun perspective(
