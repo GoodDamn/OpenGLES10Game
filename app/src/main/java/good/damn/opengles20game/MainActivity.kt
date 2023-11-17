@@ -9,6 +9,7 @@ import android.view.View
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.renderer.MainRenderer
 import java.util.*
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 

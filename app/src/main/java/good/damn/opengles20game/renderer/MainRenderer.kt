@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.metrics.PlaybackErrorEvent
 import android.opengl.GLES11.*
 import android.opengl.GLSurfaceView
+import android.util.Log
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.components.entities.enemies.Ghost
@@ -12,6 +13,7 @@ import good.damn.opengles20game.templates.Square
 import good.damn.opengles20game.templates.Triangle
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.log
 
 class MainRenderer: GLSurfaceView.Renderer {
 
@@ -37,15 +39,25 @@ class MainRenderer: GLSurfaceView.Renderer {
         mTriangle = Triangle()
     }
 
-    override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        val meshGhost = Mesh(mContext, "sphere.obj")
+    override fun onSurfaceCreated(gl: GL10?, p1: EGLConfig?) {
+        for (ex in gl!!.glGetString(GL_EXTENSIONS).split(" ")) {
+            Log.d(TAG, "onSurfaceCreated: " + ex)
+        }
+
+        val meshGhost = Mesh(
+            "objs/sphere.obj",
+            "textures/border_object.png",
+            mContext)
         mGhosts = arrayOf(
             Ghost(meshGhost),
             Ghost(meshGhost),
             Ghost(meshGhost)
         )
 
-        mPlayer = Player(Mesh(mContext, "box.obj"))
+        mPlayer = Player(Mesh(
+            "objs/box.obj",
+                    "textures/heavy_object.png",
+                    mContext))
 
         mPlayer.setPosition(5f,0f,0f)
 
@@ -55,6 +67,8 @@ class MainRenderer: GLSurfaceView.Renderer {
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
         glShadeModel(GL_SMOOTH)
         glDisable(GL_DITHER)
+
+        glEnable(GL_TEXTURE_2D)
     }
 
     override fun onSurfaceChanged(gl: GL10?,

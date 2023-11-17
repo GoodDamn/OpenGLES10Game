@@ -8,6 +8,7 @@ import java.util.*
 
 final class FileOBJ {
 
+    var mTexCoords: FloatArray
     var mVertices: FloatArray
     var mIndices: ShortArray
 
@@ -72,17 +73,22 @@ final class FileOBJ {
         }
 
         //mNormals = FloatArray(faces.size * 3)
-        //mTexCoords = FloatArray(faces.size * 2)
+        mTexCoords = FloatArray(faces.size)
         mVertices = vertices.toFloatArray()
         mIndices = ShortArray(faces.size)
 
-        var index = 0
-
-        for (face in faces) {
+        for ((index, face) in faces.withIndex()) {
             val parts = face.split("/")
             val vertexIndex = (parts[0].toShort() - 1).toShort()
             mIndices[index] = vertexIndex
-            index++
+
+            val textureIndex = parts[1].toShort() - 1
+
+            if (index % 2 == 0) {
+                mTexCoords[index] = textures[textureIndex]
+            } else {
+                mTexCoords[index] = 1 - textures[textureIndex]
+            }
         }
 
         /*mVertices = floatArrayOf(
