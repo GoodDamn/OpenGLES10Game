@@ -7,7 +7,6 @@ import android.opengl.GLES10.*
 class Ghost(mesh: Mesh): Entity(mesh) {
 
     override fun draw() {
-        glColor4f(1f,0f,0f,1f) // RGBA
         super.draw()
     }
 }

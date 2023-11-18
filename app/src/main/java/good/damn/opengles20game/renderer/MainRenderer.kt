@@ -1,29 +1,27 @@
 package good.damn.opengles20game.renderer
 
 import android.content.Context
-import android.media.metrics.PlaybackErrorEvent
+import android.opengl.EGL14
 import android.opengl.GLES11.*
 import android.opengl.GLSurfaceView
 import android.util.Log
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.components.entities.enemies.Ghost
+import good.damn.opengles20game.components.entities.map.MapElement
 import good.damn.opengles20game.components.entities.players.Player
-import good.damn.opengles20game.templates.Square
-import good.damn.opengles20game.templates.Triangle
+import good.damn.opengles20game.components.light.Light
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import kotlin.math.log
 
 class MainRenderer: GLSurfaceView.Renderer {
 
     private val TAG = "MainRenderer"
 
+    private lateinit var mapElements: Array<MapElement>
     private lateinit var mGhosts: Array<Ghost>
+    private lateinit var mLights: Array<Light>
     private lateinit var mPlayer: Player
-
-    private var mSquare: Square
-    private var mTriangle: Triangle
 
     private var mRotatableCamera = RotatableCamera()
 
@@ -35,8 +33,6 @@ class MainRenderer: GLSurfaceView.Renderer {
 
     constructor(context: Context) {
         mContext = context
-        mSquare = Square()
-        mTriangle = Triangle()
     }
 
     override fun onSurfaceCreated(gl: GL10?, p1: EGLConfig?) {
@@ -55,6 +51,17 @@ class MainRenderer: GLSurfaceView.Renderer {
             Ghost(meshGhost)
         )
 
+        mapElements = arrayOf(
+            MapElement(Mesh(
+                "objs/simplePlane.obj",
+                "textures/plane.jpg",
+                mContext))
+        )
+
+        mLights = arrayOf(
+            Light(0)
+        )
+
         mPlayer = Player(Mesh(
             "objs/box.obj",
                     "textures/heavy_object.png",
@@ -69,7 +76,7 @@ class MainRenderer: GLSurfaceView.Renderer {
         glShadeModel(GL_SMOOTH)
         glDisable(GL_DITHER)
 
-        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_LIGHTING)
     }
 
     override fun onSurfaceChanged(gl: GL10?,
@@ -82,7 +89,7 @@ class MainRenderer: GLSurfaceView.Renderer {
 
         mRotatableCamera.perspective(
             45.0f, mAspect,
-            0.1f, 100.0f, gl!!)
+            0.02f, 100.0f, gl!!)
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -92,11 +99,19 @@ class MainRenderer: GLSurfaceView.Renderer {
 
         mRotatableCamera.layout(gl!!)
 
+        for (map in mapElements) {
+            map.draw()
+        }
+
         for (ghost in mGhosts) {
             ghost.draw()
         }
 
         mPlayer.draw()
+
+        for (light in mLights) {
+            light.draw()
+        }
     }
 
     fun setCamera(rotatableCamera: RotatableCamera) {

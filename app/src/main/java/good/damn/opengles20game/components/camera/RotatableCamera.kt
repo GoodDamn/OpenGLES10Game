@@ -47,15 +47,14 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
-
-        mAngleX += (x - mSwapTouchX) * 0.01f
+        mAngleX += (x - mSwapTouchX) * 0.003f
         if (mAngleX >= 360) {
             mAngleX -= 360
         } else if (mAngleX <= -360) {
             mAngleX += 360
         }
 
-        mAngleY -= (y - mSwapTouchY) * 0.01f
+        mAngleY -= (y - mSwapTouchY) * 0.003f
         if (mAngleY < 5) {
             mAngleY = 5.0
         } else if (mAngleY > 90) {

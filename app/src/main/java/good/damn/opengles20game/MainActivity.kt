@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var mHas2Fingers = false
-    private var mActivePtrId = 0
 
     private lateinit var mSurfaceView: GLSurfaceView
 
@@ -39,36 +38,24 @@ class MainActivity : AppCompatActivity() {
         mSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
 
         mSurfaceView.setOnTouchListener { _, motion ->
-
             when (motion.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
-
-                    mActivePtrId = motion.getPointerId(0)
-
                     rotatableCamera.anchor(
                         motion.rawX,
                         motion.rawY
                     )
-                    Log.d(TAG, "onCreate: ACTION_DOWN")
                 }
                 MotionEvent.ACTION_MOVE -> {
-
                     if (mHas2Fingers) {
-
-                        val ptrIndex  = motion
-                            .findPointerIndex(mActivePtrId)
-                        Log.d(TAG, "onCreate: ACTION_MOVE: mHas2Fingers: ")
-
                         rotatableCamera.zoom(
-                            motion.getX(ptrIndex),
-                            motion.getY(ptrIndex))
+                            motion.rawX,
+                            motion.rawY)
                         return@setOnTouchListener true
                     }
 
                     rotatableCamera.rotate(
                         motion.rawX,
                         motion.rawY)
-                    Log.d(TAG, "onCreate: ACTION_MOVE")
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     rotatableCamera.anchor(
@@ -76,15 +63,13 @@ class MainActivity : AppCompatActivity() {
                         motion.rawY
                     )
                     mHas2Fingers = true
-                    Log.d(TAG, "onCreate: ACTION_POINTER_DOWN")
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
                     mHas2Fingers = false
-                    Log.d(TAG, "onCreate: ACTION_POINTER_UP")
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    Log.d(TAG, "onCreate: ACTION_UP")
+
                 }
             }
 

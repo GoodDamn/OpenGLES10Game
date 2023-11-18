@@ -18,13 +18,20 @@ class Mesh {
     private var mVertices: FloatBuffer
     private var mIndices: ShortBuffer
 
+    private var mFacesCount = 0
+
     private var mTextureID: IntArray
+
+    private var material: Material
 
     constructor(filePath: String,
                 texturePath: String,
                 context: Context) {
 
         mObjFile = FileOBJ(context, filePath)
+
+        mFacesCount = mObjFile.mIndices.size
+
         mIndices = ByteBuffer
             .allocateDirect(mObjFile.mIndices.size * 2)
             .order(ByteOrder.nativeOrder())
@@ -49,12 +56,17 @@ class Mesh {
         mTexCoords.position(0)
 
         mTextureID = Texture.load(context, texturePath)
+
+        material = Material()
     }
 
     fun draw() {
-        glFrontFace(GL_CCW)
-        glEnable(GL_CULL_FACE)
-        glCullFace(GL_BACK)
+        //glEnable(GL_CULL_FACE)
+        //glCullFace(GL_BACK)
+
+        material.draw()
+
+        glEnable(GL_TEXTURE_2D)
 
         glEnableClientState(GL_VERTEX_ARRAY)
         glVertexPointer(3, GL_FLOAT, 0, mVertices)
@@ -62,7 +74,8 @@ class Mesh {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glTexCoordPointer(2,GL_FLOAT, 0, mTexCoords)
 
-        //glBindTexture(GL_TEXTURE_2D, mTextureID[0])
+        glBindTexture(GL_TEXTURE_2D, mTextureID[0])
+
 
         glDrawElements(
             GL_TRIANGLES,
@@ -73,7 +86,8 @@ class Mesh {
 
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
-        glDisable(GL_CULL_FACE)
+        //glDisable(GL_CULL_FACE)
+        glDisable(GL_TEXTURE_2D)
     }
 
 }

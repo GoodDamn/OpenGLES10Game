@@ -82,13 +82,10 @@ final class FileOBJ {
             val vertexIndex = (parts[0].toShort() - 1).toShort()
             mIndices[index] = vertexIndex
 
-            val textureIndex = parts[1].toShort() - 1
+            val texIndex = parts[1].toShort() - 1
 
-            if (index % 2 == 0) {
-                mTexCoords[index] = textures[textureIndex]
-            } else {
-                mTexCoords[index] = 1 - textures[textureIndex]
-            }
+            mTexCoords[index] = textures[texIndex]
+            //mTexCoords[index]
         }
 
         /*mVertices = floatArrayOf(
@@ -126,4 +123,5 @@ final class FileOBJ {
             mNormals[texIndex++] = normals[index]
         }*/
     }
+
 }
