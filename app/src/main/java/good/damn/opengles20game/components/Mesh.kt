@@ -18,8 +18,6 @@ class Mesh {
     private var mVertices: FloatBuffer
     private var mIndices: ShortBuffer
 
-    private var mFacesCount = 0
-
     private var mTextureID: IntArray
 
     private var material: Material
@@ -29,8 +27,6 @@ class Mesh {
                 context: Context) {
 
         mObjFile = FileOBJ(context, filePath)
-
-        mFacesCount = mObjFile.mIndices.size
 
         mIndices = ByteBuffer
             .allocateDirect(mObjFile.mIndices.size * 2)

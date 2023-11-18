@@ -37,8 +37,8 @@ abstract class Entity {
     fun randomPosition() {
         setPosition(
             MainActivity.mRandom.nextInt(5).toFloat(),
-            0f,
-            MainActivity.mRandom.nextInt(5).toFloat())
+            -0.51f,
+            5f)
     }
 
     fun setPosition(x: Float,

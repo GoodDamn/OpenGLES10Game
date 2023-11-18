@@ -66,10 +66,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
                     mHas2Fingers = false
+                    return@setOnTouchListener false
                 }
 
                 MotionEvent.ACTION_UP -> {
-
+                    mHas2Fingers = false
+                    return@setOnTouchListener false
                 }
             }
 

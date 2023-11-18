@@ -73,19 +73,20 @@ final class FileOBJ {
         }
 
         //mNormals = FloatArray(faces.size * 3)
-        mTexCoords = FloatArray(faces.size)
+        mTexCoords = FloatArray(faces.size * 2)
         mVertices = vertices.toFloatArray()
         mIndices = ShortArray(faces.size)
+
+        var texIndex = 0
 
         for ((index, face) in faces.withIndex()) {
             val parts = face.split("/")
             val vertexIndex = (parts[0].toShort() - 1).toShort()
             mIndices[index] = vertexIndex
 
-            val texIndex = parts[1].toShort() - 1
-
-            mTexCoords[index] = textures[texIndex]
-            //mTexCoords[index]
+            var i = 2 * (parts[1].toInt() - 1)
+            mTexCoords[texIndex++] = textures[i++]
+            mTexCoords[texIndex++] = 1 - textures[i]
         }
 
         /*mVertices = floatArrayOf(
