@@ -2,13 +2,11 @@ package good.damn.opengles20game.components.camera
 
 import android.opengl.GLES10.*
 import android.opengl.GLU
-import android.os.SystemClock
 import android.util.Log
-import good.damn.opengles20game.renderer.MainRenderer
+import good.damn.opengles20game.renderer.Renderer
 import java.lang.Math.cos
 import java.lang.Math.sin
 import javax.microedition.khronos.opengles.GL10
-import kotlin.math.hypot
 
 class RotatableCamera {
 
@@ -53,10 +51,9 @@ class RotatableCamera {
         mAnchorZ = z
     }
 
-    fun anchor(
+    fun swap(
         x: Float,
-        y: Float
-    ) {
+        y: Float) {
         mSwapTouchX = x
         mSwapTouchY = y
     }
@@ -65,15 +62,14 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
-        Log.d(TAG, "rotate: $mAngleX $mAngleY ${MainRenderer.mFPSCounter.fps} ${MainRenderer.mFPSCounter.delta}")
-        mAngleX += (x - mSwapTouchX) * 0.1f * MainRenderer.mFPSCounter.delta
+        mAngleX += (x - mSwapTouchX) * 0.1f * Renderer.mFPSCounter.delta
         if (mAngleX >= 360) {
             mAngleX -= 360
         } else if (mAngleX <= -360) {
             mAngleX += 360
         }
 
-        mAngleY += (y - mSwapTouchY) * 0.1f * MainRenderer.mFPSCounter.delta
+        mAngleY += (y - mSwapTouchY) * 0.1f * Renderer.mFPSCounter.delta
         if (mAngleY < 4.8) {
             mAngleY = 4.8
         } else if (mAngleY > 5.7f) {
@@ -87,7 +83,11 @@ class RotatableCamera {
 
     fun zoom(x: Float,
              y: Float) {
-        mRadius -= (x - mSwapTouchX) * 0.01f
+        mRadius -= (x - mSwapTouchX) * Renderer.mFPSCounter.delta
+        Log.d(TAG, "zoom: $mRadius")
+        if (mRadius < 6.4) {
+            mRadius = 6.4
+        }
         recalPos()
         mSwapTouchX = x
         mSwapTouchY = y

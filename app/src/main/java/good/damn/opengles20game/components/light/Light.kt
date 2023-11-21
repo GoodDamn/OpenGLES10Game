@@ -65,5 +65,7 @@ class Light: PositionEntity {
         glLightfv(mLightID, GL_SPECULAR, mSpecular, 0)
         glLightfv(mLightID, GL_DIFFUSE, mDiffuse, 0)
         glLightfv(mLightID, GL_POSITION, mPosition, 0)
+        //glLightf(mLightID, GL_SPOT_CUTOFF, 30f)
+        //glLightf(mLightID, GL_SPOT_EXPONENT, 60.0f)
     }
 }

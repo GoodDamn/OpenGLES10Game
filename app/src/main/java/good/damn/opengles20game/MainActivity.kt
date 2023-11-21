@@ -4,12 +4,8 @@ import android.annotation.SuppressLint
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.MotionEventCompat
-import good.damn.opengles20game.components.camera.RotatableCamera
-import good.damn.opengles20game.renderer.MainRenderer
+import good.damn.opengles20game.renderer.Renderer
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val renderer = MainRenderer(this)
+        val renderer = Renderer(this)
 
         mSurfaceView = GLSurfaceView(this)
         mSurfaceView.setEGLContextClientVersion(1)
