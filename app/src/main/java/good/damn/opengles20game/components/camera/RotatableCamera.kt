@@ -2,12 +2,15 @@ package good.damn.opengles20game.components.camera
 
 import android.opengl.GLES10.*
 import android.opengl.GLU
+import android.util.Log
 import java.lang.Math.cos
 import java.lang.Math.sin
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.hypot
 
 class RotatableCamera {
+
+    private val TAG = "RotatableCamera"
 
     private var mRadius = 15.0
 
@@ -35,6 +38,15 @@ class RotatableCamera {
         )
     }
 
+    fun setAnchorPosition(
+        x: Float,
+        y: Float,
+        z: Float) {
+        mAnchorX = x
+        mAnchorY = y
+        mAnchorZ = z
+    }
+
     fun anchor(
         x: Float,
         y: Float
@@ -47,6 +59,7 @@ class RotatableCamera {
         x: Float,
         y: Float
     ) {
+        Log.d(TAG, "rotate: $mAngleX $mAngleY")
         mAngleX += (x - mSwapTouchX) * 0.003f
         if (mAngleX >= 360) {
             mAngleX -= 360
@@ -69,7 +82,6 @@ class RotatableCamera {
     fun zoom(x: Float,
              y: Float) {
         mRadius -= (x - mSwapTouchX) * 0.01f
-        mRadius -= (y - mSwapTouchY) * 0.01f
         recalPos()
         mSwapTouchX = x
         mSwapTouchY = y
@@ -90,8 +102,8 @@ class RotatableCamera {
     private fun recalPos() {
         val ySin = sin(mAngleY)
 
-        mX = (mRadius * ySin * cos(mAngleX)).toFloat()
-        mY = (mRadius * cos(mAngleY)).toFloat()
-        mZ = (mRadius * ySin * sin(mAngleX)).toFloat()
+        mX = mAnchorX + (mRadius * ySin * cos(mAngleX)).toFloat()
+        mY = mAnchorY + (mRadius * cos(mAngleY)).toFloat()
+        mZ = mAnchorZ + (mRadius * ySin * sin(mAngleX)).toFloat()
     }
 }

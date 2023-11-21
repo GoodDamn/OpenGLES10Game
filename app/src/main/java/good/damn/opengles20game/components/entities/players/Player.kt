@@ -7,6 +7,7 @@ import android.opengl.GLES10.*
 class Player(mesh: Mesh) : Entity(mesh) {
 
     override fun draw() {
+        glColor4f(0.0f,1.0f,0.0f,1.0f)
         super.draw()
     }
 
