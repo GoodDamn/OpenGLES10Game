@@ -1,12 +1,9 @@
 package good.damn.opengles20game.components.light
 
 import android.opengl.GLES10.*
+import good.damn.opengles20game.components.entities.PositionEntity
 
-class Light {
-
-    private var mX = 0.0f
-    private var mY = 0.0f
-    private var mZ = 0.0f
+class Light: PositionEntity {
 
     private var mLightID = 0
 
@@ -26,12 +23,29 @@ class Light {
         5f, 5.0f, 0f, 1.0f
     )
 
-    constructor(lightIndex: Int) {
+    constructor(
+        lightIndex: Int,
+        x:Float,
+        y:Float,
+        z:Float
+    ) {
         mLightID = GL_LIGHT0 + lightIndex
+        setPosition(x,y,z)
     }
 
     fun disable() {
         glDisable(mLightID)
+    }
+
+    override fun setPosition(
+        x: Float,
+        y: Float,
+        z: Float
+    ) {
+        mPosition[0] = x
+        mPosition[1] = y
+        mPosition[2] = z
+        super.setPosition(x, y, z)
     }
 
     fun draw() {

@@ -5,11 +5,7 @@ import good.damn.opengles20game.MainActivity
 import good.damn.opengles20game.components.Mesh
 import java.nio.FloatBuffer
 
-abstract class Entity {
-
-    private var mX = 0.0f
-    private var mY = 0.0f
-    private var mZ = 0.0f
+abstract class Entity: PositionEntity {
 
     private var mPitch = 0.0f // XZ Rot
     private var mYaw = 0.0f // XY
@@ -41,13 +37,14 @@ abstract class Entity {
             5f)
     }
 
-    fun setPosition(x: Float,
+    override fun setPosition(x: Float,
                     y: Float,
                     z: Float
     ) {
         modelBuffer.put(12,x)
         modelBuffer.put(13,y)
         modelBuffer.put(14,z)
+        super.setPosition(x,y,z)
     }
 
     open fun draw() {

@@ -8,6 +8,7 @@ import java.util.*
 
 final class FileOBJ {
 
+    var mNormals: FloatArray
     var mTexCoords: FloatArray
     var mVertices: FloatArray
     var mIndices: ShortArray
@@ -72,57 +73,34 @@ final class FileOBJ {
             }
         }
 
-        //mNormals = FloatArray(faces.size * 3)
+        mNormals = FloatArray(faces.size * 3)
         mTexCoords = FloatArray(faces.size * 2)
         mVertices = vertices.toFloatArray()
         mIndices = ShortArray(faces.size)
 
         var texIndex = 0
+        //var posIndex = 0
+        var normIndex = 0
 
         for ((index, face) in faces.withIndex()) {
             val parts = face.split("/")
             val vertexIndex = (parts[0].toShort() - 1).toShort()
             mIndices[index] = vertexIndex
 
+            //var i = 3 * vertexIndex
+            //mVertices[posIndex++] = vertices[i++]
+            //mVertices[posIndex++] = vertices[i++]
+            //mVertices[posIndex++] = vertices[i]
+
             var i = 2 * (parts[1].toInt() - 1)
             mTexCoords[texIndex++] = textures[i++]
             mTexCoords[texIndex++] = 1 - textures[i]
+
+            i = 3 * (parts[2].toInt() - 1)
+            mNormals[normIndex++] = normals[i++]
+            mNormals[normIndex++] = normals[i++]
+            mNormals[normIndex++] = normals[i]
         }
-
-        /*mVertices = floatArrayOf(
-             1.0f,  1.0f,  1.0f, // rb
-             1.0f, -1.0f,  1.0f, // rt
-            -1.0f, -1.0f,  1.0f, // lt
-            -1.0f,  1.0f,  1.0f  // lb
-        )
-
-        mIndices = shortArrayOf(
-            0,1,2,2,3,0
-        )*/
-
-        /*var posIndex = 0
-        var normIndex = 0
-        var texIndex = 0
-
-        for (i in 0 until faces.size) {
-            val parts = faces[i].split("/")
-            val vertexIndex = parts[0].toInt() - 1
-            mIndices[i] = vertexIndex
-
-            var index = 3 * vertexIndex
-            mPositions[posIndex++] = vertices[index++]
-            mPositions[posIndex++] = vertices[index++]
-            mPositions[posIndex++] = vertices[index]
-
-            index = 2 * (parts[1].toInt() - 1)
-            mTexCoords[normIndex++] = textures[index++]
-            mTexCoords[normIndex++] = 1 - textures[index]
-
-            index = 3 * (parts[2].toInt() - 1)
-            mNormals[texIndex++] = normals[index++]
-            mNormals[texIndex++] = normals[index++]
-            mNormals[texIndex++] = normals[index]
-        }*/
     }
 
 }

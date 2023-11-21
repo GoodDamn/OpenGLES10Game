@@ -17,6 +17,7 @@ class Mesh {
     private var mTexCoords: FloatBuffer
     private var mVertices: FloatBuffer
     private var mIndices: ShortBuffer
+    private var mNormals: FloatBuffer
 
     private var mTextureID: IntArray
 
@@ -51,6 +52,13 @@ class Mesh {
             .put(mObjFile.mTexCoords)
         mTexCoords.position(0)
 
+        mNormals = ByteBuffer
+            .allocateDirect(mObjFile.mNormals.size * 4)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+            .put(mObjFile.mNormals)
+        mNormals.position(0)
+
         mTextureID = Texture.load(context, texturePath)
 
         material = Material()
@@ -70,6 +78,9 @@ class Mesh {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         glTexCoordPointer(2,GL_FLOAT, 0, mTexCoords)
 
+        glEnableClientState(GL_NORMAL_ARRAY)
+        glNormalPointer(GL_FLOAT, 0, mNormals)
+
         glBindTexture(GL_TEXTURE_2D, mTextureID[0])
 
 
@@ -80,6 +91,7 @@ class Mesh {
             mIndices
         )
 
+        glDisableClientState(GL_NORMAL_ARRAY)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
         //glDisable(GL_CULL_FACE)
