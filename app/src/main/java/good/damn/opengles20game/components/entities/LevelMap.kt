@@ -3,6 +3,7 @@ package good.damn.opengles20game.components.entities
 import android.content.Context
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.entities.map.MapElement
+import java.util.*
 
 class LevelMap: PositionEntity() {
 
@@ -30,10 +31,10 @@ class LevelMap: PositionEntity() {
         3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
     );
 
-    private lateinit var mapElements: Array<MapElement?>
+    private lateinit var mapElements: Array<MapElement>
 
     fun create(mContext: Context) {
-        mapElements = arrayOfNulls(mPassabilityMap.size + 1)
+        val elements = LinkedList<MapElement>()
 
         val mesh1 = Mesh(
             "objs/chamfer_box.obj",
@@ -50,26 +51,27 @@ class LevelMap: PositionEntity() {
             "textures/border_object.png",
             mContext)
 
-        var x = 0f
-        var y = 0f
+        var x = mX
+        var z = mZ
 
         for (i in mPassabilityMap.indices) {
             if (i % 21 == 0) {
-                y++
-                x = 0f
+                z++
+                x = mX
             }
+
+            lateinit var element:MapElement
             when (mPassabilityMap[i]) {
-                1 -> {
-                    mapElements[i] = MapElement(mesh1)
+                0 -> {
+                    x++
+                    continue
                 }
-                2 -> {
-                    mapElements[i] = MapElement(mesh2)
-                }
-                3 -> {
-                    mapElements[i] = MapElement(mesh3)
-                }
+                1 -> element = MapElement(mesh1)
+                2 -> element = MapElement(mesh2)
+                3 -> element = MapElement(mesh3)
             }
-            mapElements[i]?.setPosition(x,0f,y)
+            element.setPosition(x,mY,z)
+            elements.add(element)
             x++
         }
 
@@ -79,11 +81,15 @@ class LevelMap: PositionEntity() {
             "textures/plane.jpg",
             mContext)
         )
-        lPlane.setPosition(10f,-0.51f,11f)
-        mapElements[mapElements.size-1] = lPlane
+        lPlane.setPosition(mX+10f,mY-0.51f,mZ+11f)
+        elements.add(lPlane)
+
+        mapElements = elements.toTypedArray()
     }
 
     fun draw() {
-
+        for (element in mapElements) {
+            element.draw()
+        }
     }
 }

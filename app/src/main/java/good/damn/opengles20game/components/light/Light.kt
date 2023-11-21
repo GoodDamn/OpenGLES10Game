@@ -12,7 +12,7 @@ class Light: PositionEntity {
     )
 
     private val mDiffuse = floatArrayOf(
-        0.8f, 0.8f, 0.8f, 1.0f
+        0.0f, 0.0f, 0.8f, 1.0f
     )
 
     private val mSpecular = floatArrayOf(
@@ -46,6 +46,16 @@ class Light: PositionEntity {
         mPosition[1] = y
         mPosition[2] = z
         super.setPosition(x, y, z)
+    }
+
+    fun setColor(
+        r: Float,
+        g:Float,
+        b: Float
+    ) {
+        mDiffuse[0] = r
+        mDiffuse[1] = g
+        mDiffuse[2] = b
     }
 
     fun draw() {

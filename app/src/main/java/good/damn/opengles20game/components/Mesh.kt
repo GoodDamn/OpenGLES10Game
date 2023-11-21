@@ -83,6 +83,9 @@ class Mesh {
 
         glBindTexture(GL_TEXTURE_2D, mTextureID[0])
 
+        glTexEnvx(GL_TEXTURE_ENV,
+            GL_TEXTURE_ENV_MODE,
+            GL_MODULATE)
 
         glDrawElements(
             GL_TRIANGLES,

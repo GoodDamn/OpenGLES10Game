@@ -28,55 +28,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val rotatableCamera = RotatableCamera()
         val renderer = MainRenderer(this)
-        renderer.setCamera(rotatableCamera)
 
         mSurfaceView = GLSurfaceView(this)
         mSurfaceView.setEGLContextClientVersion(1)
         mSurfaceView.setRenderer(renderer)
         mSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
 
-        mSurfaceView.setOnTouchListener { _, motion ->
-            when (motion.action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_DOWN -> {
-                    rotatableCamera.anchor(
-                        motion.rawX,
-                        motion.rawY
-                    )
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    if (mHas2Fingers) {
-                        rotatableCamera.zoom(
-                            motion.rawX,
-                            motion.rawY)
-                        return@setOnTouchListener true
-                    }
-
-                    rotatableCamera.rotate(
-                        motion.rawX,
-                        motion.rawY)
-                }
-                MotionEvent.ACTION_POINTER_DOWN -> {
-                    rotatableCamera.anchor(
-                        motion.rawX,
-                        motion.rawY
-                    )
-                    mHas2Fingers = true
-                }
-                MotionEvent.ACTION_POINTER_UP -> {
-                    mHas2Fingers = false
-                    return@setOnTouchListener false
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    mHas2Fingers = false
-                    return@setOnTouchListener false
-                }
-            }
-
-            return@setOnTouchListener true
-        }
+        mSurfaceView.setOnTouchListener(renderer)
 
         setContentView(mSurfaceView)
     }
