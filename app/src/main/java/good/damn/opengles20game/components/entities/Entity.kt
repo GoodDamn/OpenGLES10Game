@@ -11,10 +11,12 @@ abstract class Entity: PositionEntity {
     private var mYaw = 0.0f // XY
     private var mRoll = 0.0f // ZY
 
-    private var mesh: Mesh?
+    private var mesh: Mesh? = null
 
     private val modelBuffer =
         FloatBuffer.allocate(16)
+
+    constructor()
 
     constructor(mesh: Mesh?) {
         this.mesh = mesh
@@ -28,6 +30,10 @@ abstract class Entity: PositionEntity {
             0f, 0f, 0f, 1f, // position (x,y,z)
         )).position(0)
         randomPosition()
+    }
+
+    fun setMesh(mesh: Mesh?) {
+        this.mesh = mesh
     }
 
     fun randomPosition() {
@@ -45,6 +51,17 @@ abstract class Entity: PositionEntity {
         modelBuffer.put(13,y)
         modelBuffer.put(14,z)
         super.setPosition(x,y,z)
+    }
+
+    override fun addPosition(
+        x: Float,
+        y: Float,
+        z: Float
+    ) {
+        super.addPosition(x,y,z)
+        modelBuffer.put(12,mX)
+        modelBuffer.put(13,mY)
+        modelBuffer.put(14,mZ)
     }
 
     open fun draw() {

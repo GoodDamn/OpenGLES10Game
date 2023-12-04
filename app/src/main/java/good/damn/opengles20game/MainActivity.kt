@@ -1,14 +1,20 @@
 package good.damn.opengles20game
 
 import android.annotation.SuppressLint
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import good.damn.opengles20game.renderer.Renderer
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity
+    : AppCompatActivity(){
 
     private val TAG = "MainActivity"
 
@@ -16,22 +22,25 @@ class MainActivity : AppCompatActivity() {
         val mRandom = Random()
     }
 
-    private var mHas2Fingers = false
-
+    private lateinit var mRenderer: Renderer
+    private lateinit var mSensorManager: SensorManager
     private lateinit var mSurfaceView: GLSurfaceView
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val renderer = Renderer(this)
+        mRenderer = Renderer(this)
 
         mSurfaceView = GLSurfaceView(this)
         mSurfaceView.setEGLContextClientVersion(1)
-        mSurfaceView.setRenderer(renderer)
+        mSurfaceView.setRenderer(mRenderer)
         mSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
 
-        mSurfaceView.setOnTouchListener(renderer)
+        mSurfaceView.setOnTouchListener(mRenderer)
+
+        mSensorManager = getSystemService(SENSOR_SERVICE)
+                as SensorManager
 
         setContentView(mSurfaceView)
     }
@@ -39,11 +48,14 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mSurfaceView.onPause()
+        mSensorManager.unregisterListener(mRenderer)
     }
 
     override fun onResume() {
         super.onResume()
         mSurfaceView.onResume()
+        registerSensor(Sensor.TYPE_ACCELEROMETER, mRenderer)
+        registerSensor(Sensor.TYPE_MAGNETIC_FIELD, mRenderer)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -62,4 +74,15 @@ class MainActivity : AppCompatActivity() {
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
     }
+
+    private fun registerSensor(
+        sensorType: Int,
+        listener: SensorEventListener
+    ) {
+        mSensorManager.registerListener(
+            listener,
+            mSensorManager.getDefaultSensor(sensorType),
+            SensorManager.SENSOR_DELAY_GAME)
+    }
+
 }
