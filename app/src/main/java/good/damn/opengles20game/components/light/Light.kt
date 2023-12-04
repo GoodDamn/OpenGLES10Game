@@ -8,7 +8,7 @@ class Light: PositionEntity {
     private var mLightID = 0
 
     private val mAmbient = floatArrayOf(
-        0.5f, 0.5f, 0.5f, 1.0f
+        0.25f, 0.25f, 0.25f, 1.0f
     )
 
     private val mDiffuse = floatArrayOf(
@@ -83,7 +83,7 @@ class Light: PositionEntity {
         glLightfv(mLightID, GL_SPECULAR, mSpecular, 0)
         glLightfv(mLightID, GL_DIFFUSE, mDiffuse, 0)
         glLightfv(mLightID, GL_POSITION, mPosition, 0)
-        glLightfv(mLightID, GL_SPOT_DIRECTION, mSpotDirection, 0)
+        //glLightfv(mLightID, GL_SPOT_DIRECTION, mSpotDirection, 0)
         //glLightf(mLightID, GL_SPOT_EXPONENT, 5.0f)
         //glLightf(mLightID, GL_SPOT_CUTOFF, 70f)
     }

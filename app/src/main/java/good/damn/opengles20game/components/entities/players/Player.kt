@@ -9,10 +9,15 @@ class Player : Entity() {
 
     private val mLight = Light(4)
 
+    init {
+        mLight.setColor(1.0f,1.0f,0.0f)
+    }
+
     override fun draw() {
-        mLight.setPosition(mX,mY,mZ)
+        //mLight.setPosition(mX,mY,mZ)
+        //mLight.setDirection(mX,mY+25,mZ)
         //glColor4f(0.0f,1.0f,0.0f,1.0f)
-        mLight.draw()
+        //mLight.draw()
         super.draw()
     }
 

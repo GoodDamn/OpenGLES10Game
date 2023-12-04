@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import good.damn.opengles20game.renderer.Renderer
 import java.util.*
 
@@ -30,6 +32,8 @@ class MainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val metrics = resources.displayMetrics
+
         mRenderer = Renderer(this)
 
         mSurfaceView = GLSurfaceView(this)
@@ -42,7 +46,20 @@ class MainActivity
         mSensorManager = getSystemService(SENSOR_SERVICE)
                 as SensorManager
 
-        setContentView(mSurfaceView)
+        val textViewMsg = TextView(this)
+        textViewMsg.setTextColor(0xffffff00.toInt())
+        textViewMsg.setBackgroundColor(0)
+
+        mRenderer.mTextViewMsg = textViewMsg
+
+        val frameLayout = FrameLayout(this)
+        frameLayout.addView(mSurfaceView)
+        frameLayout.addView(
+            textViewMsg,
+            (metrics.widthPixels * 0.5f).toInt(),
+            -1)
+
+        setContentView(frameLayout)
     }
 
     override fun onPause() {

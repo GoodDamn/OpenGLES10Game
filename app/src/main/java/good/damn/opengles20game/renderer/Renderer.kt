@@ -11,6 +11,7 @@ import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.camera.RotatableCamera
 import good.damn.opengles20game.components.entities.LevelMap
@@ -26,6 +27,10 @@ class Renderer
     : GLSurfaceView.Renderer,
       View.OnTouchListener,
       SensorEventListener {
+
+    var resetX: Float = 0f
+    var resetZ: Float = 0f
+    var mTextViewMsg: TextView? = null
 
     private val TAG = "MainRenderer"
 
@@ -45,10 +50,9 @@ class Renderer
     private var mHeight: Int = 0
     private var mHas2Fingers = false
 
-    private var mContext: Context
+    private val mLight = Light(2)
 
-    var resetX: Float = 0f
-    var resetZ: Float = 0f
+    private var mContext: Context
 
     constructor(context: Context) {
         mContext = context
@@ -71,6 +75,8 @@ class Renderer
             mContext
         ))
 
+        mLight.setColor(0f,1f,0f)
+        mLight.setPosition(5.0f,5.0f,5.0f)
         mPlayer.setPosition(1f,0f,2.0f)
 
         glClearDepthf(1.0f)
@@ -107,6 +113,8 @@ class Renderer
         mLevelMap.draw()
 
         mPlayer.draw()
+
+        mLight.draw()
 
         mSum += mFPSCounter.delta
     }
@@ -171,6 +179,7 @@ class Renderer
     private val I = FloatArray(9)
     private val mOrient = FloatArray(3)
 
+    @SuppressLint("SetTextI18n")
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) {
             return
@@ -186,7 +195,6 @@ class Renderer
             mGeomagnetic = event.values
         }
 
-
         if (mGravity == null || mGeomagnetic == null) {
             return
         }
@@ -200,6 +208,7 @@ class Renderer
                 0f,
                 (abs(mOrient[2]) - 1.5707f) * 0.05f
             )
+            mTextViewMsg?.text = "$mPlayer\n${mOrient.contentToString()}"
         }
     }
 
