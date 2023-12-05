@@ -7,12 +7,22 @@ open class PositionEntity {
     protected var mZ = 0.0f
 
 
-    open fun setPosition(x: Float,
-                         y: Float,
-                         z: Float
+    open fun setPosition(
+        x: Float,
+        y: Float,
+        z: Float
     ) {
         mX = x
         mY = y
         mZ = z
+    }
+
+    open fun addPosition(
+        x: Float,
+        y: Float,
+        z: Float) {
+        mX += x
+        mY += y
+        mZ += z
     }
 }

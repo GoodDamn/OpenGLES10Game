@@ -2,27 +2,35 @@ package good.damn.opengles20game.renderer
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.opengl.GLES11.*
 import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
+import android.widget.TextView
 import good.damn.opengles20game.components.Mesh
 import good.damn.opengles20game.components.camera.RotatableCamera
-import good.damn.opengles20game.components.entities.Entity
 import good.damn.opengles20game.components.entities.LevelMap
-import good.damn.opengles20game.components.entities.map.MapElement
+import good.damn.opengles20game.components.entities.players.Player
 import good.damn.opengles20game.components.light.Light
 import good.damn.opengles20game.fps.FPSCounter
+import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.abs
-import kotlin.math.sin
 
 class Renderer
     : GLSurfaceView.Renderer,
-      View.OnTouchListener {
+      View.OnTouchListener,
+      SensorEventListener {
+
+    var resetX: Float = 0f
+    var resetZ: Float = 0f
+    var mTextViewMsg: TextView? = null
 
     private val TAG = "MainRenderer"
 
@@ -32,16 +40,17 @@ class Renderer
 
     private var mSum = 0.0f
 
-    private var mesh: Entity? = null
-
     private val mLevelMap = LevelMap()
-    private lateinit var mLights: Array<Light>
     private var mRotatableCamera = RotatableCamera()
+
+    private var mPlayer = Player()
 
     private var mAspect: Float = 1f
     private var mWidth: Int = 0
     private var mHeight: Int = 0
     private var mHas2Fingers = false
+
+    private val mLight = Light(2)
 
     private var mContext: Context
 
@@ -60,22 +69,15 @@ class Renderer
         mRotatableCamera.setAnchorPosition(
             10f,0f, 11f)
 
-
-        val mapLight = Light(0,10f, -5f, 11f)
-        mapLight.setColor(0.8f,0.8f,0.8f)
-
-        val playerLight = Light(1, 1.5f,-0.5f,1.5f)
-        playerLight.setColor(0f,0f,0.8f)
-        mLights = arrayOf(
-            mapLight,
-            playerLight
-        )
-
-        mesh = MapElement(Mesh(
+        mPlayer.setMesh(Mesh(
             "objs/sphere.obj",
             "textures/plane.jpg",
             mContext
-        ));
+        ))
+
+        mLight.setColor(0f,1f,0f)
+        mLight.setPosition(5.0f,5.0f,5.0f)
+        mPlayer.setPosition(1f,0f,2.0f)
 
         glClearDepthf(1.0f)
         glEnable(GL_DEPTH_TEST)
@@ -110,18 +112,11 @@ class Renderer
 
         mLevelMap.draw()
 
+        mPlayer.draw()
+
+        mLight.draw()
+
         mSum += mFPSCounter.delta
-
-        val r = abs(sin(mSum)) * 0.5f
-
-        mesh?.setPosition(10 * r, 0f, 2.0f)
-        mLights[1].setPosition(10 * r, 0f, 2.0f);
-
-        mesh?.draw()
-
-        for (light in mLights) {
-            light.draw()
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -175,5 +170,49 @@ class Renderer
         }
 
         return true
+    }
+
+    private var mGravity: FloatArray? = null
+    private var mGeomagnetic: FloatArray? = null
+
+    private val R = FloatArray(9)
+    private val I = FloatArray(9)
+    private val mOrient = FloatArray(3)
+
+    @SuppressLint("SetTextI18n")
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event == null) {
+            return
+        }
+
+        val type = event.sensor.type
+
+        if (type == Sensor.TYPE_ACCELEROMETER) {
+            mGravity = event.values
+        }
+
+        if (type == Sensor.TYPE_MAGNETIC_FIELD) {
+            mGeomagnetic = event.values
+        }
+
+        if (mGravity == null || mGeomagnetic == null) {
+            return
+        }
+
+        if (SensorManager.
+            getRotationMatrix(R,I,
+                mGravity, mGeomagnetic)) {
+            SensorManager.getOrientation(R,mOrient)
+            mPlayer.addPosition(
+                (abs(mOrient[0]) - 1.5707f) * 0.05f,
+                0f,
+                (abs(mOrient[2]) - 1.5707f) * 0.05f
+            )
+            mTextViewMsg?.text = "$mPlayer\n${mOrient.contentToString()}"
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 }

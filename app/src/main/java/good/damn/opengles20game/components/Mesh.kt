@@ -34,7 +34,6 @@ class Mesh {
             .order(ByteOrder.nativeOrder())
             .asShortBuffer()
             .put(mObjFile.mIndices)
-
         mIndices.position(0)
 
         mVertices = ByteBuffer
@@ -50,6 +49,7 @@ class Mesh {
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
             .put(mObjFile.mTexCoords)
+
         mTexCoords.position(0)
 
         mNormals = ByteBuffer

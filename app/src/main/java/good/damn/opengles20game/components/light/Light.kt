@@ -8,20 +8,28 @@ class Light: PositionEntity {
     private var mLightID = 0
 
     private val mAmbient = floatArrayOf(
-        0.2f, 0.2f, 0.2f, 1.0f
+        0.25f, 0.25f, 0.25f, 1.0f
     )
 
     private val mDiffuse = floatArrayOf(
-        0.0f, 0.0f, 0.8f, 1.0f
+        0.0f, 1.0f, 1.0f, 1.0f
     )
 
     private val mSpecular = floatArrayOf(
-        0.5f, 0.2f, 0.2f, 1.0f
+        0.0f, 0.0f, 0.0f, 1.0f
     )
 
     private val mPosition = floatArrayOf(
         5f, 5.0f, 0f, 1.0f
     )
+
+    private val mSpotDirection = floatArrayOf(
+        0.0f, 0.0f, -1.0f
+    )
+
+    constructor(lightIndex: Int) {
+        mLightID = lightIndex
+    }
 
     constructor(
         lightIndex: Int,
@@ -48,6 +56,16 @@ class Light: PositionEntity {
         super.setPosition(x, y, z)
     }
 
+    fun setDirection(
+        x: Float,
+        y: Float,
+        z: Float
+    ) {
+        mSpotDirection[0] = x
+        mSpotDirection[1] = y
+        mSpotDirection[2] = z
+    }
+
     fun setColor(
         r: Float,
         g:Float,
@@ -65,7 +83,8 @@ class Light: PositionEntity {
         glLightfv(mLightID, GL_SPECULAR, mSpecular, 0)
         glLightfv(mLightID, GL_DIFFUSE, mDiffuse, 0)
         glLightfv(mLightID, GL_POSITION, mPosition, 0)
-        //glLightf(mLightID, GL_SPOT_CUTOFF, 30f)
-        //glLightf(mLightID, GL_SPOT_EXPONENT, 60.0f)
+        //glLightfv(mLightID, GL_SPOT_DIRECTION, mSpotDirection, 0)
+        //glLightf(mLightID, GL_SPOT_EXPONENT, 5.0f)
+        //glLightf(mLightID, GL_SPOT_CUTOFF, 70f)
     }
 }

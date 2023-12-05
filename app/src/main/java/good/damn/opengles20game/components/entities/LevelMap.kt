@@ -37,7 +37,7 @@ class LevelMap: PositionEntity() {
         val elements = LinkedList<MapElement>()
 
         val mesh1 = Mesh(
-            "objs/chamfer_box.obj",
+            "objs/box.obj",
             "textures/light_object.png",
             mContext)
 
